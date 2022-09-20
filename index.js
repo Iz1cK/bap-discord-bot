@@ -3,6 +3,9 @@ import "./commands.js";
 
 client.on("ready", () => {
   console.log("the bot is ready");
+  const guild = client.guilds.cache.get("989829603369562132");
+  const memCount = client.channels.cache.get("1021593751510056970");
+  memCount.setName(`Member Count: ${guild.memberCount}`);
 });
 
 client.on("messageCreate", async (message) => {
@@ -28,5 +31,8 @@ client.on("interactionCreate", async (interaction) => {
     for (let i = 0; i < amount; i++) {
       await interaction.followUp(`<@${target.id}> IS A LOSER`);
     }
+  }
+  if (interaction.commandName === "repo") {
+    await interaction.reply("https://github.com/Iz1cK/bap-discord-bot");
   }
 });
