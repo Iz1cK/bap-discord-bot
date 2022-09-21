@@ -12,7 +12,7 @@ const commandFiles = fs
 
 for (const file of commandFiles) {
   const { default: command } = await import(`./commands/${file}`);
-  console.log(command);
+  console.log("/" + command.name);
   commands.push(command.toJSON());
 }
 
