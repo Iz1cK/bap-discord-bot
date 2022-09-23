@@ -1,5 +1,4 @@
 import client from "./client.js";
-import { EmbedBuilder } from "discord.js";
 import { insertUser, getUserById } from "./model/users.model.js";
 import checkLanguage from "./utils/checkLanguage.js";
 import "./commands.js";

@@ -1,4 +1,5 @@
 import { getAllUsersStats } from "../model/stats.model.js";
+import { EmbedBuilder } from "discord.js";
 
 export const offenses = async (interaction) => {
   const allUsersStats = await getAllUsersStats();
