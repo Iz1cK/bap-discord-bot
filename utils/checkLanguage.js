@@ -1,1 +1,3 @@
-export default checkLanguage = (message) => {};
+export default (message) => {
+  return false;
+};
