@@ -36,14 +36,14 @@ client.on("ready", async () => {
 
 client.on("messageCreate", async (message) => {
   if (!message?.author.bot) {
-    if (message.content === "Nur") {
+    if (checkLanguage(message.content)) {
       message.delete();
       const { offensecount } = await updateOffenseCount(message.author.id);
       message.channel.send(
         `Hey ${message.author.username}, language!(offense:${offensecount})`
       );
     }
-    console.log(message.content);
+    console.log(message.author.username + ": " + message.content);
     let rand = Math.floor(Math.random() * 10) + 1;
     if (rand == 1) {
       message.reply(`Yo ${message.author.username}, shut up...`);
