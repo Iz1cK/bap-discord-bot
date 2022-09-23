@@ -1,5 +1,5 @@
-export const info = (interaction) => {
-    if (interaction.options.getSubcommand() === "user") {
+export const info = async (interaction) => {
+  if (interaction.options.getSubcommand() === "user") {
     const user = interaction.options.getUser("target");
 
     if (user) {
@@ -14,4 +14,4 @@ export const info = (interaction) => {
       `Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`
     );
   }
-}
+};
