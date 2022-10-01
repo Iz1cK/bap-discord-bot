@@ -7,6 +7,8 @@ import { updateOffenseCount, insertUserStats } from "./model/stats.model.js";
 import { atspam } from "./handlers/atspam.handler.js";
 import { info } from "./handlers/info.handler.js";
 import { offenses } from "./handlers/offenses.handler.js";
+import { random } from "./handlers/randomPicker.handler.js";
+import { teamgen } from "./handlers/teamgen.handler.js";
 
 client.on("ready", async () => {
   const guild = client.guilds.cache.get("989829603369562132");
@@ -69,5 +71,36 @@ client.on("interactionCreate", async (interaction) => {
     case "offenses":
       offenses(interaction);
       break;
+    case "random":
+      random(interaction);
+      break;
+    case "owo":
+      await interaction.reply("σωσ UwU OwO Nuzzle Wuzzle Blush σωσ");
+      break;
+    case "teamgen":
+      teamgen(interaction);
+      break;
+    default:
+      await interaction.reply({
+        content: `Command you requested help for does not exist!`,
+        ephemeral: true,
+      });
+      break;
   }
+});
+
+client.on("voiceStateUpdate", (oldState, newState) => {
+  console.log(oldState.member.user.username);
+  let user = oldState.member.user;
+  let oldChannel = oldState.channel.name || null;
+  let newChannel = newState.channel.name || null;
+  if (newState.channelId === null) {
+    //left
+    console.log(`${user.username} left ${oldChannel}`);
+  } else if (oldState.channelId === null)
+    // joined
+    console.log(`${user.username} joined ${newChannel}`);
+  // moved
+  else
+    console.log(`${user.username} moved from ${oldChannel} to ${newChannel}`);
 });
