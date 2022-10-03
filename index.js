@@ -1,5 +1,6 @@
 import client from "./client.js";
 import { AuditLogEvent } from "discord.js";
+import redis from "./redis.js";
 import { insertUser, getUserById } from "./model/users.model.js";
 import checkLanguage from "./utils/checkLanguage.js";
 import "./commands.js";
@@ -91,7 +92,7 @@ client.on("interactionCreate", async (interaction) => {
       break;
   }
 });
-
+// let interval;
 client.on("voiceStateUpdate", async (oldState, newState) => {
   let user = oldState.member.user;
   let oldChannel = oldState.channel || null;
@@ -109,11 +110,28 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   //   );
   //   return;
   // }
-
   if (oldChannel === null) {
     log(`${user.username} joined ${newChannel.name}`);
+    // let usertimer = 0;
+    // interval = setInterval(() => {
+    //   log(`${user.username} has been connected for ${usertimer} seconds`);
+    //   usertimer += 1;
+    // }, 1000);
+    let currTime = new Date();
+    log(currTime);
+    redis.set(
+      user.id,
+      JSON.stringify({
+        join_time: currTime,
+        leave_time: null,
+      })
+    );
   } else if (newChannel === null) {
     log(`${user.username} left ${oldChannel.name}`);
+    // clearInterval(interval);
+    const data = JSON.parse(await redis.get(user.id));
+    log(data);
+
     return;
   } else if (newChannel && oldChannel && newChannel.id !== oldChannel.id) {
     log(`${user.username} moved from ${oldChannel.name} to ${newChannel.name}`);
