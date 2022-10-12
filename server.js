@@ -23,6 +23,18 @@ app.post("/mention", (req, res) => {
   res.status(200).send("success");
 });
 
+app.get("/text-channels", async (req, res) => {
+  const guild = client.guilds.cache.get("989829603369562132");
+  console.log(guild);
+  const channels = JSON.parse(JSON.stringify(guild.channels)).guild.channels;
+  console.log(channels);
+  const textChannels = channels.filter(
+    (channel) => channel.type === "GUILD_TEXT"
+  );
+  console.log(textChannels);
+  res.status(200).send({ textChannels });
+});
+
 app.listen(port, () => {
   console.log(`Server running at 3.122.116.236:${port} `);
 });
