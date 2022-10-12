@@ -1,4 +1,4 @@
-export const sorry = async (interaction) => {
+export const fuckyou = async (interaction) => {
   const target = interaction.options.getUser("target");
   const user = interaction.user;
   if (!user)

@@ -53,6 +53,8 @@ client.on("messageCreate", async (message) => {
     let rand = Math.floor(Math.random() * 10) + 1;
     if (rand == 1) {
       message.reply(`Yo ${message.author.username}, shut up...`);
+    } else if (rand == 2) {
+      message.reply(`That's what she said`);
     }
   }
 });
@@ -118,19 +120,40 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     //   usertimer += 1;
     // }, 1000);
     let currTime = new Date();
-    log(currTime);
     redis.set(
       user.id,
       JSON.stringify({
+        ...JSON.parse(await redis.get(user.id)),
+        username: user.username,
         join_time: currTime,
-        leave_time: null,
       })
     );
   } else if (newChannel === null) {
-    log(`${user.username} left ${oldChannel.name}`);
     // clearInterval(interval);
     const data = JSON.parse(await redis.get(user.id));
-    log(data);
+    let currTime = new Date();
+    let oldJoinTime = new Date(data.join_time ?? "");
+    let oldStreamStartTime = new Date(data.stream_start_time ?? "");
+    let oldDeafenStartTime = new Date(data.deafen_start_time ?? "");
+    let oldMuteStartTime = new Date(data.mute_start_time ?? "");
+    let joinDiffDate = Math.floor(currTime - oldJoinTime) / 1000;
+    let streamDiffDate = Math.floor(currTime - oldStreamStartTime) / 1000;
+    let deafonDiffDate = Math.floor(currTime - oldDeafenStartTime) / 1000;
+    let muteDiffDate = Math.floor(currTime - oldMuteStartTime) / 1000;
+    redis.set(
+      user.id,
+      JSON.stringify({
+        data,
+        total_online_time: (data.total_online_time || 0) + joinDiffDate,
+        total_stream_time: (data.total_stream_time || 0) + streamDiffDate,
+        total_deafen_time: (data.total_deafen_time || 0) + deafonDiffDate,
+        total_mute_time: (data.total_mute_time || 0) + muteDiffDate,
+      })
+    );
+    log(
+      `${user.username} left ${oldChannel.name} after ${joinDiffDate} seconds`
+    );
+    console.log(JSON.parse(await redis.get(user.id)));
 
     return;
   } else if (newChannel && oldChannel && newChannel.id !== oldChannel.id) {
@@ -139,25 +162,84 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
   if (newState.streaming && !oldState.streaming) {
     log(`${user.username} is now streaming`);
+    let currTime = new Date();
+    redis.set(
+      user.id,
+      JSON.stringify({
+        ...JSON.parse(await redis.get(user.id)),
+        stream_start_time: currTime,
+      })
+    );
   } else if (oldState.streaming && !newState.streaming) {
-    log(`${user.username} has stopped streaming`);
+    const data = JSON.parse(await redis.get(user.id));
+    let currTime = new Date();
+    let oldStreamStartTime = new Date(data.stream_start_time ?? "");
+    let streamDiffDate = Math.floor(currTime - oldStreamStartTime) / 1000;
+    redis.set(
+      user.id,
+      JSON.stringify({
+        ...data,
+        total_stream_time: (data.total_stream_time || 0) + streamDiffDate,
+      })
+    );
+    log(
+      `${user.username} has stopped streaming after ${streamDiffDate} seconds`
+    );
   }
 
   if (newState.selfDeaf || newState.serverDeaf) {
     log(`${user.username} is deafened`);
+    let currTime = new Date();
+    redis.set(
+      user.id,
+      JSON.stringify({
+        ...JSON.parse(await redis.get(user.id)),
+        deafen_start_time: currTime,
+      })
+    );
     return;
   } else if (oldState.selfDeaf || oldState.serverDeaf) {
-    log(`${user.username} is no longer deafened`);
+    const data = JSON.parse(await redis.get(user.id));
+    let currTime = new Date();
+    let oldDeafenStartTime = new Date(data.deafen_start_time ?? "");
+    let deafonDiffDate = Math.floor(currTime - oldDeafenStartTime) / 1000;
+    redis.set(
+      user.id,
+      JSON.stringify({
+        ...data,
+        total_deafen_time: (data.total_deafen_time || 0) + deafonDiffDate,
+      })
+    );
+    log(`${user.username} is no longer deafened after ${deafonDiffDate}`);
     return;
   }
 
   if (newState.selfMute || newState.serverMute) {
     log(`${user.username} is ${newState.serverMute ? "server " : ""}muted`);
+    let currTime = new Date();
+    redis.set(
+      user.id,
+      JSON.stringify({
+        ...JSON.parse(await redis.get(user.id)),
+        mute_start_time: currTime,
+      })
+    );
   } else if (oldState.selfMute || oldState.serverMute) {
+    const data = JSON.parse(await redis.get(user.id));
+    let currTime = new Date();
+    let oldMuteStartTime = new Date(data.mute_start_time ?? "");
+    let muteDiffDate = Math.floor(currTime - oldMuteStartTime) / 1000;
+    redis.set(
+      user.id,
+      JSON.stringify({
+        ...data,
+        total_mute_time: (data.total_mute_time || 0) + muteDiffDate,
+      })
+    );
     log(
       `${user.username} is no longer ${
         oldState.serverMute ? "server " : ""
-      }muted`
+      }muted after ${muteDiffDate}`
     );
   }
 });
