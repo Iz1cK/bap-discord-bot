@@ -18,7 +18,7 @@ app.post("/mention", (req, res) => {
   const data = req.body;
   console.log(data);
   client.channels.cache
-    .get("990391168565133335")
+    .get(data.channelid)
     .send(`<@${data.user.id}> mentions: ${data.message}`);
   res.status(200).send("success");
 });
