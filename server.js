@@ -24,5 +24,5 @@ app.post("/mention", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port} `);
+  console.log(`Server running at 3.122.116.236:${port} `);
 });

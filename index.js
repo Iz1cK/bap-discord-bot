@@ -94,31 +94,12 @@ client.on("interactionCreate", async (interaction) => {
       break;
   }
 });
-// let interval;
 client.on("voiceStateUpdate", async (oldState, newState) => {
   let user = oldState.member.user;
   let oldChannel = oldState.channel || null;
   let newChannel = newState.channel || null;
-  //theres a problem with this approach to know who moved who, maybe I can match by time, when the move happened
-  //that doesnt fully 100% eliminate it, but it would be very unlikely for it to break
-  // const fetchedLogs = await newState.guild.fetchAuditLogs({
-  //   limit: 1,
-  //   type: AuditLogEvent.MemberMove,
-  // });
-  // const { executor } = fetchedLogs.entries.first();
-  // if (executor) {
-  //   log(
-  //     `${user.username} was moved by ${executor.username} from ${oldChannel.name} to ${newChannel.name}.`
-  //   );
-  //   return;
-  // }
   if (oldChannel === null) {
     log(`${user.username} joined ${newChannel.name}`);
-    // let usertimer = 0;
-    // interval = setInterval(() => {
-    //   log(`${user.username} has been connected for ${usertimer} seconds`);
-    //   usertimer += 1;
-    // }, 1000);
     let currTime = new Date();
     redis.set(
       user.id,
@@ -129,7 +110,6 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       })
     );
   } else if (newChannel === null) {
-    // clearInterval(interval);
     const data = JSON.parse(await redis.get(user.id));
     let currTime = new Date();
     let oldJoinTime = new Date(data.join_time ?? "");
@@ -143,7 +123,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     redis.set(
       user.id,
       JSON.stringify({
-        data,
+        ...data,
         total_online_time: (data.total_online_time || 0) + joinDiffDate,
         total_stream_time: (data.total_stream_time || 0) + streamDiffDate,
         total_deafen_time: (data.total_deafen_time || 0) + deafonDiffDate,
