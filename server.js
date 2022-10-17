@@ -28,8 +28,13 @@ app.post("/mention-id", (req, res) => {
   console.log(data);
   client.channels.cache
     .get(data.channelid)
-    .send(`<@${data.userid}> mentions: ${data.message}`);
+    .send(`<@${data.userid}> ${data.message}`);
   res.status(200).send("success");
+});
+
+app.post("/name-game-matrix", (req, res) => {
+  console.log(req.body);
+  res.send(req.body);
 });
 
 app.get("/text-channels", async (req, res) => {
