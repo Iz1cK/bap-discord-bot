@@ -36,7 +36,7 @@ app.post("/mention-id", (req, res) => {
 
 app.post("/name-game-matrix", (req, res) => {
   let newData = [];
-  const data = req.body;
+  const { data } = req.body;
   data.forEach((sub) => {
     newData.push(...sub);
   });
