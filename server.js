@@ -40,7 +40,7 @@ app.post("/name-game-matrix", (req, res) => {
   data.forEach((sub) => {
     newData.push(...sub);
   });
-  redis.set("name-game-words", newData);
+  redis.set("name-game-words", JSON.stringify(newData));
   res.send(req.body);
 });
 
