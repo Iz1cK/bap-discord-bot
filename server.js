@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import redis from "./redis.js";
+import fs from "fs";
 import client from "./client.js";
 
 // const { errorConverter, errorHandler } = require("./middlewares/error");
@@ -34,6 +36,7 @@ app.post("/mention-id", (req, res) => {
 
 app.post("/name-game-matrix", (req, res) => {
   console.log(req.body);
+  fs.writeFileSync("./output.txt", req.body);
   res.send(req.body);
 });
 
