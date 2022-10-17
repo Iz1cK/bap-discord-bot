@@ -35,8 +35,12 @@ app.post("/mention-id", (req, res) => {
 });
 
 app.post("/name-game-matrix", (req, res) => {
-  console.log(req.body);
-  fs.writeFileSync("./output.txt", JSON.stringify(req.body));
+  let newData = [];
+  const data = req.body;
+  data.forEach((sub) => {
+    newData.push(...sub);
+  });
+  redis.set("name-game-words", newData);
   res.send(req.body);
 });
 
