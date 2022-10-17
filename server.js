@@ -23,6 +23,14 @@ app.post("/mention", (req, res) => {
   res.status(200).send("success");
 });
 
+app.post("/mention-id", (req, res) => {
+  const data = req.body;
+  client.channels.cache
+    .get(data.channelid)
+    .send(`<@${data.userid}> mentions: ${data.message}`);
+  res.status(200).send("success");
+});
+
 app.get("/text-channels", async (req, res) => {
   const guild = client.guilds.cache.get("989829603369562132");
   const channels = await guild.channels.fetch();
