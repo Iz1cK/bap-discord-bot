@@ -25,6 +25,7 @@ app.post("/mention", (req, res) => {
 
 app.post("/mention-id", (req, res) => {
   const data = req.body;
+  console.log(data);
   client.channels.cache
     .get(data.channelid)
     .send(`<@${data.userid}> mentions: ${data.message}`);
