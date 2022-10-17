@@ -36,7 +36,7 @@ app.post("/mention-id", (req, res) => {
 
 app.post("/name-game-matrix", (req, res) => {
   console.log(req.body);
-  fs.writeFileSync("./output.txt", req.body);
+  fs.writeFileSync("./output.txt", JSON.stringify(req.body));
   res.send(req.body);
 });
 
