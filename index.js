@@ -43,18 +43,30 @@ client.on("ready", async () => {
 client.on("messageCreate", async (message) => {
   if (!message?.author.bot) {
     log(message.author.username + ": " + message.content);
-    if (checkLanguage(message.content)) {
-      message.delete();
-      const { offensecount } = await updateOffenseCount(message.author.id);
-      message.channel.send(
-        `Hey ${message.author.username}, language!(offense:${offensecount})`
-      );
-    }
+    // if (checkLanguage(message.content)) {
+    //   message.delete();
+    //   const { offensecount } = await updateOffenseCount(message.author.id);
+    //   message.channel.send(
+    //     `Hey ${message.author.username}, language!(offense:${offensecount})`
+    //   );
+    // }
     let rand = Math.floor(Math.random() * 10) + 1;
     if (rand == 1) {
       message.reply(`Yo ${message.author.username}, shut up...`);
-    } else if (rand == 2) {
+    } else if (rand == 2 && message.channelId != "1023978475729735771") {
       message.reply(`That's what she said`);
+    }
+    if (message.channelId == "1023978475729735771") {
+      const usedWords = JSON.parse(redis.get("name-game-words"));
+      const msg = message.content.trim();
+      if (msg.split(" ").length > 1)
+        message.reply(`${message.author.username} Please type one word only!`);
+
+      if (usedWords.includes(msg)) {
+        message.reply(
+          `${message.author.username} Word already used, haha you lost a turn dingus`
+        );
+      }
     }
   }
 });

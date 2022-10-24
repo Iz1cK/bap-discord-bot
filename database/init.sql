@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users,stats,offenses CASCADE;
+DROP TABLE IF EXISTS users,stats,offenses,timetogether CASCADE;
 
 CREATE TABLE users (
     discordid varchar(20) PRIMARY KEY,
@@ -9,6 +9,7 @@ CREATE TABLE users (
 CREATE TABLE stats(
     discordid varchar(20) REFERENCES users(discordid) PRIMARY KEY,
     offensecount INTEGER CHECK(offensecount >= 0),
+    wordrepeatcount INTEGER CHECK(wordrepeatcount >= 0),
     timespent INTEGER CHECK(timespent >= 0),
     timemuted INTEGER CHECK(timemuted >= 0),
     timedeafend INTEGER CHECK(timedeafend >= 0),
