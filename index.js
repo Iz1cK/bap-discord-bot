@@ -50,7 +50,7 @@ client.on("messageCreate", async (message) => {
     //     `Hey ${message.author.username}, language!(offense:${offensecount})`
     //   );
     // }
-    let rand = Math.floor(Math.random() * 10) + 1;
+    let rand = Math.floor(Math.random() * 12) + 1;
     if (rand == 1) {
       message.reply(`Yo ${message.author.username}, shut up...`);
     } else if (rand == 2 && message.channelId != "1023978475729735771") {
