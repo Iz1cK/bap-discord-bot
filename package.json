@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon -L index.js",
-    "start": "nodemon -L server.js",
+    "start": "nodemon -L --experimental-json-modules server.js",
     "build:db": "node database/build.js"
   },
   "repository": {
@@ -23,10 +23,12 @@
   "homepage": "https://github.com/Iz1cK/bap-discord-bot#readme",
   "dependencies": {
     "@discordjs/rest": "^1.1.0",
+    "@google-cloud/local-auth": "^2.1.0",
     "cors": "^2.8.5",
     "discord.js": "^14.3.0",
     "dotenv": "^16.0.2",
     "express": "^4.18.2",
+    "googleapis": "^105.0.0",
     "node-cron": "^3.0.2",
     "nodemon": "^2.0.20",
     "pg": "^8.8.0",

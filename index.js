@@ -50,7 +50,7 @@ client.on("messageCreate", async (message) => {
     //     `Hey ${message.author.username}, language!(offense:${offensecount})`
     //   );
     // }
-    let rand = Math.floor(Math.random() * 12) + 1;
+    let rand = Math.floor(Math.random() * 10) + 1;
     if (rand == 1) {
       message.reply(`Yo ${message.author.username}, shut up...`);
     } else if (rand == 2 && message.channelId != "1023978475729735771") {
@@ -59,14 +59,18 @@ client.on("messageCreate", async (message) => {
     if (message.channelId == "1023978475729735771") {
       const usedWords = JSON.parse(redis.get("name-game-words"));
       const msg = message.content.trim();
-      if (msg.split(" ").length > 1)
+      if (msg.split(" ").length > 1) {
         message.reply(`${message.author.username} Please type one word only!`);
-
+        return;
+      }
       if (usedWords.includes(msg)) {
         message.reply(
           `${message.author.username} Word already used, haha you lost a turn dingus`
         );
+        return;
       }
+      let newData = [...usedWords, msg];
+      redis.set("name-game-words", JSON.stringify(newData));
     }
   }
 });
