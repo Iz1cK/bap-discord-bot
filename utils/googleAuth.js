@@ -50,7 +50,7 @@ async function getWords(auth) {
   const sheets = google.sheets({ version: "v4", auth });
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: "1o1QxuZYDSM7efZdtbgyD7tR2BLacBxKQlP1sndjXEcQ",
-    range: "A8:F1114",
+    range: "A8:G1114",
   });
   const rows = res.data.values;
   if (!rows || rows.length === 0) {
@@ -60,22 +60,22 @@ async function getWords(auth) {
   return rows;
 }
 
-async function putWord(auth) {
+async function putWord(auth, range, value) {
   const sheets = google.sheets({ version: "v4", auth });
   const res = await sheets.spreadsheets.values.update({
     spreadsheetId: "1o1QxuZYDSM7efZdtbgyD7tR2BLacBxKQlP1sndjXEcQ",
-    range: "F29",
+    range: range,
     valueInputOption: "RAW",
-    resource: { values: [["moriisnoob"]] },
+    resource: { values: [[value]] },
   });
-  console.log(res);
+  // console.log(res);
   return res;
 }
 
 // (async function main() {
 //   const client = await authorize();
-//   const words = await putWord(client);
+//   const words = await putWord(client, "F29", "test");
 //   console.log(words);
 // })();
 
-export default { client: await authorize(), getWords };
+export default { client: await authorize(), getWords, putWord };

@@ -36,7 +36,8 @@ import auth from "./utils/googleAuth.js";
 // ];
 const test = await auth.getWords(auth.client);
 let newData = toFilteredWords(test);
-
+let dast = toNonFilteredWords(test);
+console.log(dast[dast.length - 1]);
 // let oldData = toNonFilteredWords(Object.values(newData));
 
 let { player, cell } = findWhosTurn(newData);

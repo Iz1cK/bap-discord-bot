@@ -1,8 +1,13 @@
 import client from "./client.js";
-import { AuditLogEvent } from "discord.js";
+// import { AuditLogEvent } from "discord.js";
 import redis from "./redis.js";
 import { insertUser, getUserById } from "./model/users.model.js";
-import checkLanguage from "./utils/checkLanguage.js";
+// import checkLanguage from "./utils/checkLanguage.js";
+import { findWhosTurn } from "./utils/findWhosTurn.js";
+import { toFilteredWords } from "./utils/toFilteredWords.js";
+import { toNonFilteredWords } from "./utils/toNonFilteredWords.js";
+import USERS_IDS from "./utils/usersDiscordIds.js";
+import auth from "./utils/googleAuth.js";
 import "./commands.js";
 import log from "./utils/log.js";
 
@@ -41,37 +46,67 @@ client.on("ready", async () => {
 });
 
 client.on("messageCreate", async (message) => {
-  if (!message?.author.bot) {
-    log(message.author.username + ": " + message.content);
-    // if (checkLanguage(message.content)) {
-    //   message.delete();
-    //   const { offensecount } = await updateOffenseCount(message.author.id);
-    //   message.channel.send(
-    //     `Hey ${message.author.username}, language!(offense:${offensecount})`
-    //   );
-    // }
-    let rand = Math.floor(Math.random() * 10) + 1;
-    if (rand == 1) {
-      message.reply(`Yo ${message.author.username}, shut up...`);
-    } else if (rand == 2 && message.channelId != "1023978475729735771") {
-      message.reply(`That's what she said`);
+  if (message?.author.bot) return;
+  log(message.author.username + ": " + message.content);
+  // if (checkLanguage(message.content)) {
+  //   message.delete();
+  //   const { offensecount } = await updateOffenseCount(message.author.id);
+  //   message.channel.send(
+  //     `Hey ${message.author.username}, language!(offense:${offensecount})`
+  //   );
+  // }
+  let rand = Math.floor(Math.random() * 10) + 1;
+  if (rand == 1) {
+    message.reply(`Yo ${message.author.username}, shut up...`);
+  } else if (rand == 2 && message.channelId != "1023978475729735771") {
+    message.reply(`That's what she said`);
+  }
+  if (message.channelId == "1023978475729735771") {
+    const nonFilteredWords = toNonFilteredWords(
+      await auth.getWords(auth.client)
+    );
+    const msg = message.content.trim();
+    if (msg.split(" ").length > 1) {
+      message.reply(`${message.author.username} Please type one word only!`);
+      return;
     }
-    if (message.channelId == "1023978475729735771") {
-      const usedWords = JSON.parse(redis.get("name-game-words"));
-      const msg = message.content.trim();
-      if (msg.split(" ").length > 1) {
-        message.reply(`${message.author.username} Please type one word only!`);
-        return;
-      }
-      if (usedWords.includes(msg)) {
-        message.reply(
-          `${message.author.username} Word already used, haha you lost a turn dingus`
-        );
-        return;
-      }
-      let newData = [...usedWords, msg];
-      redis.set("name-game-words", JSON.stringify(newData));
+    const oldWord = nonFilteredWords[nonFilteredWords.length - 1];
+    if (msg[0] != oldWord[oldWord.length - 1]) {
+      message.reply(
+        `${
+          message.author.username
+        } Please type a word that begins with the letter "${
+          oldWord[oldWord.length - 1]
+        }"!`
+      );
+      return;
     }
+    if (nonFilteredWords.includes(msg.toLowerCase())) {
+      message.reply(
+        `${message.author.username} Word already used, haha you lost a turn dingus`
+      );
+      return;
+    }
+    let filteredWords = toFilteredWords(await auth.getWords(auth.client));
+    const currTurn = findWhosTurn(filteredWords);
+    if (USERS_IDS[currTurn.player] != message.author.id) {
+      message.reply(`${message.author.username} Not your turn idiot...`);
+      return;
+    }
+    const putResponse = await auth.putWord(auth.client, currTurn.cell, msg);
+    if (putResponse.status != 200) {
+      message.reply(`Something went wrong, please try again later`);
+      log("An error occured: " + putResponse);
+    }
+    filteredWords = toFilteredWords(await auth.getWords(auth.client));
+    const nextTurn = findWhosTurn(filteredWords);
+    message.reply(
+      `<@${
+        USERS_IDS[nextTurn.player]
+      }> your turn, please type a word that starts with "${
+        msg[msg.length - 1]
+      }"`
+    );
   }
 });
 

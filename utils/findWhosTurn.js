@@ -6,10 +6,11 @@ export const findWhosTurn = (obj) => {
     julio: "D",
     juan: "E",
     mori: "F",
+    rooj: "G",
   };
   for (let player in obj) {
     let line = obj[player];
-    if (line[line.length - 1] == undefined) {
+    if (line[line.length - 1] == undefined || line[line.length - 1] == "") {
       return { player, cell: lettersObj[player] + (line.length + 7) };
     }
   }
