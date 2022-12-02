@@ -60,6 +60,57 @@ async function getWords(auth) {
   return rows;
 }
 
+async function jail(auth, cell) {
+  const sheets = google.sheets({ version: "v4", auth });
+  const res = await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: "1o1QxuZYDSM7efZdtbgyD7tR2BLacBxKQlP1sndjXEcQ",
+    resource: {
+      requests: [
+        {
+          updateCells: {
+            start: {
+              sheetId: 0,
+              rowIndex: cell.row,
+              columnIndex: cell.column,
+              // rowIndex: 17,
+              // columnIndex: 7,
+            },
+            fields: "*",
+            rows: [
+              {
+                values: [
+                  {
+                    userEnteredValue: {
+                      stringValue: "Jailed",
+                    },
+                    userEnteredFormat: {
+                      backgroundColor: {
+                        red: 0,
+                        green: 0,
+                        blue: 0,
+                      },
+                      horizontalAlignment: "CENTER",
+                      textFormat: {
+                        bold: true,
+                        foregroundColor: {
+                          red: 1,
+                          green: 1,
+                          blue: 1,
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
+  });
+  return res;
+}
+
 async function putWord(auth, range, value) {
   const sheets = google.sheets({ version: "v4", auth });
   const res = await sheets.spreadsheets.values.update({
@@ -68,14 +119,13 @@ async function putWord(auth, range, value) {
     valueInputOption: "RAW",
     resource: { values: [[value]] },
   });
-  // console.log(res);
   return res;
 }
-
 // (async function main() {
 //   const client = await authorize();
-//   const words = await putWord(client, "F29", "test");
+//   const words = await putWord(client);
+//   // const words = await putWord(client, "F29", "test");
 //   console.log(words);
 // })();
 
-export default { client: await authorize(), getWords, putWord };
+export default { client: await authorize(), getWords, putWord, jail };

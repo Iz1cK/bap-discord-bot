@@ -1,7 +1,7 @@
 import { toNonFilteredWords } from "./utils/toNonFilteredWords.js";
 import { toFilteredWords } from "./utils/toFilteredWords.js";
 import { findWhosTurn } from "./utils/findWhosTurn.js";
-import USERS_IDS from "./utils/usersDiscordIds.js";
+import { discordids, lettersObj } from "./utils/usersDiscordIds.js";
 import auth from "./utils/googleAuth.js";
 // const test = [
 //   ["Coffee", "Electric", "Coaster", "Roundabout", "True_", "Erupt"],
@@ -40,10 +40,12 @@ let dast = toNonFilteredWords(test);
 console.log(dast[dast.length - 1]);
 // let oldData = toNonFilteredWords(Object.values(newData));
 
-let { player, cell } = findWhosTurn(newData);
-// console.log(USERS_IDS);
+let { player, cell, cellIndeces } = findWhosTurn(newData);
+console.log(discordids);
+console.log(lettersObj);
+auth.jail(auth.client, cellIndeces);
 
 // console.log(await auth.getWords(auth.client));
 // console.log(newData);
-console.log(player, cell);
+console.log(player, cell, cellIndeces);
 // console.log(oldData);

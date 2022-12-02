@@ -6,6 +6,11 @@ CREATE TABLE users (
     discriminator varchar(4) NOT NULL
 );
 
+-- CREATE TABLE jails (
+--     discordid varchar(20) REFERENCES users(discordid) PRIMARY KEY,
+
+-- )
+
 CREATE TABLE stats(
     discordid varchar(20) REFERENCES users(discordid) PRIMARY KEY,
     offensecount INTEGER CHECK(offensecount >= 0),

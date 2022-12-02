@@ -6,7 +6,7 @@ import { insertUser, getUserById } from "./model/users.model.js";
 import { findWhosTurn } from "./utils/findWhosTurn.js";
 import { toFilteredWords } from "./utils/toFilteredWords.js";
 import { toNonFilteredWords } from "./utils/toNonFilteredWords.js";
-import USERS_IDS from "./utils/usersDiscordIds.js";
+import { discordids, lettersObj } from "./utils/usersDiscordIds.js";
 import auth from "./utils/googleAuth.js";
 import "./commands.js";
 import log from "./utils/log.js";
@@ -62,50 +62,70 @@ client.on("messageCreate", async (message) => {
     message.reply(`That's what she said`);
   }
   if (message.channelId == "1023978475729735771") {
+    let jailed = false;
     const nonFilteredWords = toNonFilteredWords(
       await auth.getWords(auth.client)
     );
-    const msg = message.content.trim();
-    if (msg.split(" ").length > 1) {
-      message.reply(`${message.author.username} Please type one word only!`);
+    let filteredWords = toFilteredWords(await auth.getWords(auth.client));
+    const currTurn = findWhosTurn(filteredWords);
+    if (discordids[currTurn.player] != message.author.id) {
+      //JAIL
+      message.reply(
+        `${message.author.username} - not your turn, but it will be... in jail. Don't drop the soap ;)`
+      );
       return;
     }
-    const oldWord = nonFilteredWords[nonFilteredWords.length - 1];
+    const msg = message.content.trim();
+    if (msg.split(" ").length > 1) {
+      message.reply(`${message.author.username} - one word, you dingus!`);
+      return;
+    }
+    if (msg.toLowerCase() == "jailed") {
+      message.reply(
+        `${message.author.username} you wanna go to jail that bad? Use a different word, dingus!`
+      );
+      return;
+    }
+    const wordsWithoutJailed = nonFilteredWords.filter(
+      (word) => word.toLowerCase() !== "jailed"
+    );
+    const oldWord = wordsWithoutJailed[wordsWithoutJailed.length - 1];
+    console.log({ oldWord });
     if (msg[0] != oldWord[oldWord.length - 1]) {
       message.reply(
-        `${
-          message.author.username
-        } Please type a word that begins with the letter "${
+        `${message.author.username}, the letter is "${
           oldWord[oldWord.length - 1]
-        }"!`
+        }" ya 7mar`
       );
       return;
     }
     if (nonFilteredWords.includes(msg.toLowerCase())) {
+      //JAIL
+      const putResponse = await auth.jail(auth.client, currTurn.cellIndeces);
+      console.log(`Jailed {message.author.username}`);
       message.reply(
-        `${message.author.username} Word already used, haha you lost a turn dingus`
+        `The word has already been used, ${message.author.username}. I'm going to use you - in jail ;) .... ;)`
       );
-      return;
     }
-    let filteredWords = toFilteredWords(await auth.getWords(auth.client));
-    const currTurn = findWhosTurn(filteredWords);
-    if (USERS_IDS[currTurn.player] != message.author.id) {
-      message.reply(`${message.author.username} Not your turn idiot...`);
-      return;
+    if (!jailed) {
+      const putResponse = await auth.putWord(auth.client, currTurn.cell, msg);
+      if (putResponse.status != 200) {
+        message.reply(`Something went wrong, please try again later`);
+        log("An error occured: " + putResponse);
+      }
     }
-    const putResponse = await auth.putWord(auth.client, currTurn.cell, msg);
-    if (putResponse.status != 200) {
-      message.reply(`Something went wrong, please try again later`);
-      log("An error occured: " + putResponse);
-    }
-    filteredWords = toFilteredWords(await auth.getWords(auth.client));
+    words = await auth.getWords(auth.client);
+    filteredWords = toFilteredWords(words);
+    nonFilteredWords = toNonFilteredWords(words);
     const nextTurn = findWhosTurn(filteredWords);
+    oldWord = nonFilteredWords.filter(
+      (word) => word.toLowerCase() !== "jailed"
+    )[nonFilteredWords.length - 1];
+
     message.reply(
-      `<@${
-        USERS_IDS[nextTurn.player]
-      }> your turn, please type a word that starts with "${
-        msg[msg.length - 1]
-      }"`
+      `Your turn, <@${
+        discordids[nextTurn.player]
+      }>. Please type a word that starts with "${oldWord[oldWord - 1]}"`
     );
   }
 });
@@ -132,7 +152,7 @@ client.on("interactionCreate", async (interaction) => {
       random(interaction);
       break;
     case "owo":
-      await interaction.reply("σωσ UwU OwO Nuzzle Wuzzle Blush σωσ");
+      await interaction.reply("George sucks");
       break;
     case "teamgen":
       teamgen(interaction);

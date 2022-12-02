@@ -1,4 +1,14 @@
-export default {
+export const lettersObj = {
+  nur: "A",
+  mario: "B",
+  george: "C",
+  julio: "D",
+  juan: "E",
+  mori: "F",
+  rooj: "G",
+};
+
+export const discordids = {
   nur: "927623248022212608",
   mario: "226411410568118272",
   george: "180965043737853952",
