@@ -18,6 +18,7 @@ import { info } from "./handlers/info.handler.js";
 import { offenses } from "./handlers/offenses.handler.js";
 import { random } from "./handlers/randomPicker.handler.js";
 import { teamgen } from "./handlers/teamgen.handler.js";
+import { spamowo } from "./handlers/spamowo.handler.js";
 
 client.on("ready", async () => {
   const guild = client.guilds.cache.get("989829603369562132");
@@ -152,10 +153,13 @@ client.on("interactionCreate", async (interaction) => {
       random(interaction);
       break;
     case "owo":
-      await interaction.reply("George sucks");
+      await interaction.reply("σωσ UwU OwO Nuzzle Wuzzle Blush σωσ");
       break;
     case "teamgen":
       teamgen(interaction);
+      break;
+    case "spamowo":
+      spamowo(interaction);
       break;
     default:
       await interaction.reply({

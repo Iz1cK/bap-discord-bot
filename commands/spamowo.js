@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 
-const atspam = new SlashCommandBuilder()
-  .setName("atspam")
+const spamowo = new SlashCommandBuilder()
+  .setName("spamowo")
   .setDescription("spams someone repeatedly")
   .addUserOption((option) =>
     option.setName("target").setDescription("The user").setRequired(true)
@@ -9,4 +9,4 @@ const atspam = new SlashCommandBuilder()
   .addIntegerOption((option) =>
     option.setName("amount").setDescription("Amout of spam").setRequired(true)
   );
-export default atspam;
+export default spamowo;
