@@ -20,6 +20,20 @@ import { random } from "./handlers/randomPicker.handler.js";
 import { teamgen } from "./handlers/teamgen.handler.js";
 import { spamowo } from "./handlers/spamowo.handler.js";
 
+const imageReplies = [
+  "https://i.pinimg.com/564x/b5/2a/66/b52a66699b378dba4e59447c527a2c4a.jpg",
+  "https://i.pinimg.com/564x/3e/fe/bb/3efebbde464830b63c13ba95efa79bcc.jpg",
+  "https://i.pinimg.com/564x/81/c1/8b/81c18b0d628af6068cc257a3bdd4d7a9.jpg",
+  "https://i.pinimg.com/564x/a6/0c/51/a60c51240f8b1128ed731334b0dd1efc.jpg",
+  "https://i.pinimg.com/564x/f9/4f/c5/f94fc5d7b34e5f1a5406a945263a6232.jpg",
+  "https://i.pinimg.com/564x/81/df/64/81df642226c86a9bbd65c16050595ce1.jpg",
+  "https://i.pinimg.com/564x/5b/59/cd/5b59cd45c479ab7e5e18c3ea580dfd61.jpg",
+  "https://i.pinimg.com/736x/a6/50/08/a65008fd03e840e43790011f951f21d2.jpg",
+  "https://i.pinimg.com/564x/09/47/89/094789c9ff48056b7a07fd3887e4908e.jpg",
+  "https://i.pinimg.com/564x/6e/e8/c7/6ee8c74d1a476fd9046b3b811897d81a.jpg",
+  "https://i.pinimg.com/564x/b2/c7/2e/b2c72ec485c6c4f5006c3c7514bb3d33.jpg",
+];
+
 client.on("ready", async () => {
   const guild = client.guilds.cache.get("989829603369562132");
   const guildMembers = await guild.members.fetch();
@@ -61,6 +75,12 @@ client.on("messageCreate", async (message) => {
     message.reply(`Yo ${message.author.username}, shut up...`);
   } else if (rand == 2 && message.channelId != "1023978475729735771") {
     message.reply(`That's what she said`);
+  } else if (rand == 3 && message.channelId != "1023978475729735771") {
+    if (Math.random() <= 0.5) {
+      message.reply(
+        imageReplies[Math.floor(Math.random() * imageReplies.length)]
+      );
+    }
   }
   if (message.channelId == "1023978475729735771") {
     let jailed = false;
