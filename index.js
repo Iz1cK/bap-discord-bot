@@ -76,11 +76,11 @@ client.on("messageCreate", async (message) => {
   } else if (rand == 2 && message.channelId != "1023978475729735771") {
     message.reply(`That's what she said`);
   } else if (rand == 3 && message.channelId != "1023978475729735771") {
-    if (Math.random() <= 0.5) {
-      message.reply(
-        imageReplies[Math.floor(Math.random() * imageReplies.length)]
-      );
-    }
+    // if (Math.random() <= 0.7) {
+    message.reply(
+      imageReplies[Math.floor(Math.random() * imageReplies.length)]
+    );
+    // }
   }
   if (message.channelId == "1023978475729735771") {
     let jailed = false;
@@ -153,6 +153,11 @@ client.on("messageCreate", async (message) => {
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
+  log(
+    `${interaction.user.username} issue the command ${
+      interaction.commandName
+    } on ${interaction.options.getUser("target")?.username ?? "no one"}`
+  );
   switch (interaction.commandName) {
     case "ping":
       await interaction.reply("Pong!");
